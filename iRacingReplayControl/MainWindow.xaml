@@ -1,0 +1,34 @@
+﻿<mah:MetroWindow x:Class="iRacingReplayControl.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:iRacingReplayControl"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        mc:Ignorable="d"
+        Title="iRacing replay control" SizeToContent="WidthAndHeight">
+    <StackPanel Margin="0 5">
+        <Button Content="Add camera change" Click="AddCam" Height="28" Margin="5"/>
+        <DataGrid ItemsSource="{Binding}" x:Name="grid" IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single" MaxHeight="200" HeadersVisibility="Column" Margin="5">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding ReplayFrameNum}" Header="Frame" SortDirection="Ascending"/>
+                <DataGridTextColumn Binding="{Binding CarIdx}" Header="Car #" CanUserSort="False"/>
+                <DataGridTextColumn Binding="{Binding CamNumber}" Header="Cam" CanUserSort="False"/>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Label MouseLeftButtonDown="DeleteCam" Cursor="Hand">🗙</Label>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Label FontSize="10" Content="{Binding ReplayFrameNum}" ContentStringFormat="Frame: {0}"/>
+            <Separator Width="2"/>
+            <Label FontSize="10" Content="{Binding CarIdx}" ContentStringFormat="Car: {0}"/>
+            <Separator Width="2"/>
+            <Label FontSize="10" Content="{Binding CamNumber}" ContentStringFormat="Cam: {0}"/>
+        </StackPanel>
+    </StackPanel>
+</mah:MetroWindow>
