@@ -4,7 +4,18 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <PackageIcon>vhs.png</PackageIcon>
+    <PackageIconUrl />
+    <ApplicationIcon>vhs.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="vhs.png" />
+    <None Include="vhs.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MahApps.Metro" Version="2.4.7" />
@@ -13,6 +24,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\iRacingSdkWrapper\iRacingSdkWrapper\iRacingSdkWrapper.csproj" />
     <ProjectReference Include="..\..\iRacingSdkWrapper\iRacingSimulator\iRacingSimulator.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="vhs.png" />
   </ItemGroup>
 
 </Project>

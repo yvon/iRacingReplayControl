@@ -1,23 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using ControlzEx.Theming;
 using MahApps.Metro.Controls;
 using iRacingSimulator;
+using System.Diagnostics;
 
 namespace iRacingReplayControl
 {
@@ -35,18 +24,20 @@ namespace iRacingReplayControl
         {
             InitializeComponent();
 
-            InitializeComponent();
-
+            // Light or Dark mode according to windows settings
             ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode;
             ThemeManager.Current.SyncTheme();
 
             _currentCam = new Cam();
             Cams = new CamCollection();
+
+            // Live sort cameras
             _viewSource = new CollectionViewSource();
             _viewSource.Source = Cams;
-            _viewSource.SortDescriptions.Add(new SortDescription("Frame", ListSortDirection.Ascending));
+            _viewSource.SortDescriptions.Add(new SortDescription("ReplayFrameNum", ListSortDirection.Ascending));
             _viewSource.IsLiveSortingRequested = true;
 
+            // Bind data to interface
             DataContext = _currentCam;
             grid.ItemsSource = _viewSource.View;             
 
@@ -70,6 +61,26 @@ namespace iRacingReplayControl
             _currentCam.ReplayFrameNum = e.TelemetryInfo.ReplayFrameNum.Value;
             _currentCam.CarIdx = e.TelemetryInfo.CamCarIdx.Value;
             _currentCam.CamNumber = e.TelemetryInfo.CamGroupNumber.Value;
+
+            Cam nextCam = (Cam)_viewSource.View.CurrentItem;
+
+            if (nextCam != null && nextCam.ReplayFrameNum <= _currentCam.ReplayFrameNum)
+            {
+                Sim.Instance.Sdk.Camera.SwitchToCar(nextCam.CarIdx, nextCam.CamNumber);
+                _viewSource.View.MoveCurrentToNext();
+            }
+        }
+        public Cam SelectedCam => (Cam)grid.CurrentItem;
+
+        private void CurrentCellChanged(object sender, EventArgs e)
+        {
+            if (SelectedCam != null)
+                Sim.Instance.Sdk.Replay.SetPosition(SelectedCam.ReplayFrameNum);
+        }
+
+        private void MetroWindow_Closed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

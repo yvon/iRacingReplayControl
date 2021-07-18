@@ -6,12 +6,21 @@
         xmlns:local="clr-namespace:iRacingReplayControl"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="iRacing replay control" SizeToContent="WidthAndHeight">
+        Closed="MetroWindow_Closed"
+        Title="Replay" SizeToContent="WidthAndHeight">
     <StackPanel Margin="0 5">
         <Button Content="Add camera change" Click="AddCam" Height="28" Margin="5"/>
-        <DataGrid ItemsSource="{Binding}" x:Name="grid" IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single" MaxHeight="200" HeadersVisibility="Column" Margin="5">
+        <DataGrid ItemsSource="{Binding}"
+                  x:Name="grid"
+                  IsReadOnly="True"
+                  AutoGenerateColumns="False"
+                  SelectionMode="Single"
+                  MaxHeight="200"
+                  HeadersVisibility="Column"
+                  Margin="5"
+                  CurrentCellChanged="CurrentCellChanged">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding ReplayFrameNum}" Header="Frame" SortDirection="Ascending"/>
+                <DataGridTextColumn Binding="{Binding ReplayFrameNum}" Header="Frame" CanUserSort="True" SortDirection="Ascending"/>
                 <DataGridTextColumn Binding="{Binding CarIdx}" Header="Car #" CanUserSort="False"/>
                 <DataGridTextColumn Binding="{Binding CamNumber}" Header="Cam" CanUserSort="False"/>
                 <DataGridTemplateColumn>
