@@ -1,5 +1,7 @@
 # iRacingReplayControl
 
+Configure automatic camera changes for replay viewing or recording.
+
 ## HOW TO INSTALL
 
 - Download the zip file from the release page: https://github.com/yvon/iRacingReplayControl/releases
