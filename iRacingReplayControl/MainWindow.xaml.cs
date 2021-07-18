@@ -14,12 +14,10 @@ using System.Collections.Generic;
 
 namespace iRacingReplayControl
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : MetroWindow
     {
         private Cam _currentCam;
+        private Cam _lastApplied;
         private CollectionViewSource _viewSource;
 
         public CamCollection Cams { get; private set; }
@@ -54,22 +52,33 @@ namespace iRacingReplayControl
             Cams.Add(new Cam(_currentCam));
         }
 
+        private void EventuallySwitchToCam()
+        {
+            IEnumerable<Cam> OrderedCams = _viewSource.View.Cast<Cam>();
+            Cam camToApply = OrderedCams.LastOrDefault(cam => cam.ReplayFrameNum <= _currentCam.ReplayFrameNum);
+
+            if (camToApply == null || camToApply == _lastApplied)
+                return;
+
+            _lastApplied = camToApply;
+            Sim.Instance.Sdk.Camera.SwitchToCar(camToApply.CarIdx, camToApply.CamNumber);
+            _viewSource.View.MoveCurrentTo(_lastApplied);
+
+            int index = itemsControl.SelectedIndex;
+            object item = itemsControl.Items.GetItemAt(index);
+            itemsControl.ScrollIntoView(item);
+        }
+
         private void OnTelemetryUpdated(object sender, iRacingSdkWrapper.SdkWrapper.TelemetryUpdatedEventArgs e)
         {
             _currentCam.ReplayFrameNum = e.TelemetryInfo.ReplayFrameNum.Value;
             _currentCam.CarIdx = e.TelemetryInfo.CamCarIdx.Value;
             _currentCam.CamNumber = e.TelemetryInfo.CamGroupNumber.Value;
 
-            Cam nextCam = (Cam)_viewSource.View.CurrentItem;
-
-            if (nextCam != null && nextCam.ReplayFrameNum <= _currentCam.ReplayFrameNum)
-            {
-                Sim.Instance.Sdk.Camera.SwitchToCar(nextCam.CarIdx, nextCam.CamNumber);
-                _viewSource.View.MoveCurrentToNext();
-            }
+            EventuallySwitchToCam();
         }
 
-        private void JumpToCam(Cam cam)
+        private void SetPositionToCam(Cam cam)
         {
             if (cam == null)
                 return;
@@ -86,7 +95,7 @@ namespace iRacingReplayControl
         private void ClickOnCam(object sender, RoutedEventArgs e)
         {
             Cam cam = (sender as Button).DataContext as Cam;
-            JumpToCam(cam);
+            SetPositionToCam(cam);
         }
 
         private void ClickOnDeleteCam(object sender, System.Windows.Input.MouseButtonEventArgs e)

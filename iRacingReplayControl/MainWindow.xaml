@@ -10,36 +10,34 @@
         Title="Replay" SizeToContent="WidthAndHeight">
     <StackPanel Margin="0 5">
         <Button Content="Add current camera" Click="AddCam" Height="28" Margin="5"/>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="800">
-            <ItemsControl x:Name="itemsControl" Margin="2 5" ItemsSource="{Binding}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <DataTemplate.Resources>
-                            <Style TargetType="Button">
-                                <Setter Property="OverridesDefaultStyle" Value="true" />
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition></ColumnDefinition>
-                                                    <ColumnDefinition></ColumnDefinition>
-                                                    <ColumnDefinition></ColumnDefinition>
-                                                </Grid.ColumnDefinitions>
-                                                <Label Content="{Binding Time}"/>
-                                                <Label Content="{Binding CarIdx}" Grid.Column="1" ContentStringFormat="#{0}"/>
-                                                <Label Content="{Binding CamNumber}" Grid.Column="2" ContentStringFormat="Grp {0}"/>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </DataTemplate.Resources>
-                        <Button Click="ClickOnCam" MouseRightButtonDown="ClickOnDeleteCam" Cursor="Hand"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+        <ListBox x:Name="itemsControl" Margin="2 5" ItemsSource="{Binding}" MaxHeight="300" ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <DataTemplate.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="OverridesDefaultStyle" Value="true" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition></ColumnDefinition>
+                                                <ColumnDefinition></ColumnDefinition>
+                                                <ColumnDefinition></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Label Content="{Binding Time}"/>
+                                            <Label Content="{Binding CarIdx}" Grid.Column="1" ContentStringFormat="#{0}"/>
+                                            <Label Content="{Binding CamNumber}" Grid.Column="2" ContentStringFormat="Grp {0}"/>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataTemplate.Resources>
+                    <Button Click="ClickOnCam" MouseRightButtonDown="ClickOnDeleteCam" Cursor="Hand"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ListBox>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Label FontSize="10" Content="Current cam" FontWeight="Bold"/>
             <Label FontSize="10" Content="{Binding Time}"/>

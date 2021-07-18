@@ -29,6 +29,7 @@ namespace iRacingReplayControl
             {
                 _replayFrameNum = value;
                 OnPropertyChanged();
+                OnPropertyChanged("Time");
             }
         }
 
