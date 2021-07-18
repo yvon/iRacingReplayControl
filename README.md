@@ -2,7 +2,7 @@
 
 ## HOW TO INSTALL
 
-- Download the zip file
+- Download the zip file from the release page: https://github.com/yvon/iRacingReplayControl/releases
 - Extract it to any folder, like your "Documents"
 
 ## HOW TO USE
