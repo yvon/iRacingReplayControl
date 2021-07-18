@@ -7,6 +7,10 @@ using ControlzEx.Theming;
 using MahApps.Metro.Controls;
 using iRacingSimulator;
 using System.Diagnostics;
+using iRacingSdkWrapper;
+using System.Linq;
+using iRacingSimulator.Drivers;
+using System.Collections.Generic;
 
 namespace iRacingReplayControl
 {
@@ -16,7 +20,7 @@ namespace iRacingReplayControl
     public partial class MainWindow : MetroWindow
     {
         private Cam _currentCam;
-        private CollectionViewSource _viewSource; 
+        private CollectionViewSource _viewSource;
 
         public CamCollection Cams { get; private set; }
 
@@ -39,7 +43,7 @@ namespace iRacingReplayControl
 
             // Bind data to interface
             DataContext = _currentCam;
-            grid.ItemsSource = _viewSource.View;             
+            itemsControl.ItemsSource = _viewSource.View;             
 
             Sim.Instance.TelemetryUpdated += OnTelemetryUpdated;
             Sim.Instance.Start();
@@ -48,12 +52,6 @@ namespace iRacingReplayControl
         public void AddCam(object sender, RoutedEventArgs e)
         {
             Cams.Add(new Cam(_currentCam));
-        }
-
-        private void DeleteCam(object sender, RoutedEventArgs e)
-        {
-            Cam cam = (sender as Label).DataContext as Cam;
-            Cams.Remove(cam);
         }
 
         private void OnTelemetryUpdated(object sender, iRacingSdkWrapper.SdkWrapper.TelemetryUpdatedEventArgs e)
@@ -70,17 +68,31 @@ namespace iRacingReplayControl
                 _viewSource.View.MoveCurrentToNext();
             }
         }
-        public Cam SelectedCam => (Cam)grid.CurrentItem;
 
-        private void CurrentCellChanged(object sender, EventArgs e)
+        private void JumpToCam(Cam cam)
         {
-            if (SelectedCam != null)
-                Sim.Instance.Sdk.Replay.SetPosition(SelectedCam.ReplayFrameNum);
+            if (cam == null)
+                return;
+
+            Sim.Instance.Sdk.Replay.SetPosition(cam.ReplayFrameNum);
+            _viewSource.View.MoveCurrentTo(cam);
         }
 
         private void MetroWindow_Closed(object sender, EventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        private void ClickOnCam(object sender, RoutedEventArgs e)
+        {
+            Cam cam = (sender as Button).DataContext as Cam;
+            JumpToCam(cam);
+        }
+
+        private void ClickOnDeleteCam(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Cam cam = (sender as Button).DataContext as Cam;
+            Cams.Remove(cam);
         }
     }
 }

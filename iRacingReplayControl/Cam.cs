@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace iRacingReplayControl
@@ -29,6 +30,11 @@ namespace iRacingReplayControl
                 _replayFrameNum = value;
                 OnPropertyChanged();
             }
+        }
+
+        public string Time
+        {
+            get => TimeSpan.FromSeconds(_replayFrameNum / 60).ToString();
         }
 
         public int CarIdx
