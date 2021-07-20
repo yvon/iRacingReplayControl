@@ -4,8 +4,7 @@ Configure automatic camera changes for replay viewing or recording.
 
 ## HOW TO INSTALL
 
-- Download the zip file from the release page: https://github.com/yvon/iRacingReplayControl/releases
-- Extract it to any folder, like your "Documents"
+- Download the latest release from https://github.com/yvon/iRacingReplayControl/releases
 
 ## HOW TO USE
 
