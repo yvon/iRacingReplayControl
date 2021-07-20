@@ -1,16 +1,14 @@
-﻿<mah:MetroWindow x:Class="iRacingReplayControl.MainWindow"
+﻿<Window x:Class="iRacingReplayControl.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:iRacingReplayControl"
-        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Closed="MetroWindow_Closed"
-        Title="Replay" SizeToContent="WidthAndHeight">
-    <StackPanel Margin="0 5">
-        <Button Content="Add current camera" Click="AddCam" Height="28" Margin="5"/>
-        <ListBox x:Name="itemsControl" Margin="2 5" ItemsSource="{Binding}" MaxHeight="300" ScrollViewer.VerticalScrollBarVisibility="Visible">
+        Title="iRacing Replay Control" SizeToContent="WidthAndHeight" Closed="Window_Closed" ResizeMode="NoResize" Icon="vhs.ico">
+    <StackPanel Margin="5">
+        <Button Content="Add current camera" Click="AddCam" Height="28" Margin="0 5"/>
+        <ListBox x:Name="itemsControl" Margin="0 5" ItemsSource="{Binding}" MaxHeight="300" ScrollViewer.VerticalScrollBarVisibility="Visible" BorderThickness="0">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <DataTemplate.Resources>
@@ -45,4 +43,4 @@
             <Label FontSize="10" Content="{Binding CamNumber}" ContentStringFormat="Grp {0}"/>
         </StackPanel>
     </StackPanel>
-</mah:MetroWindow>
+</Window>

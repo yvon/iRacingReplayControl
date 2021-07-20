@@ -1,20 +1,15 @@
-﻿using System;
+﻿using iRacingSimulator;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using ControlzEx.Theming;
-using MahApps.Metro.Controls;
-using iRacingSimulator;
-using System.Diagnostics;
-using iRacingSdkWrapper;
-using System.Linq;
-using iRacingSimulator.Drivers;
-using System.Collections.Generic;
 
 namespace iRacingReplayControl
 {
-    public partial class MainWindow : MetroWindow
+    public partial class MainWindow : Window
     {
         private Cam _currentCam;
         private Cam _lastApplied;
@@ -25,10 +20,6 @@ namespace iRacingReplayControl
         public MainWindow()
         {
             InitializeComponent();
-
-            // Light or Dark mode according to windows settings
-            ThemeManager.Current.ThemeSyncMode = ThemeSyncMode.SyncWithAppMode;
-            ThemeManager.Current.SyncTheme();
 
             _currentCam = new Cam();
             Cams = new CamCollection();
@@ -41,7 +32,7 @@ namespace iRacingReplayControl
 
             // Bind data to interface
             DataContext = _currentCam;
-            itemsControl.ItemsSource = _viewSource.View;             
+            itemsControl.ItemsSource = _viewSource.View;
 
             Sim.Instance.TelemetryUpdated += OnTelemetryUpdated;
             Sim.Instance.Start();
@@ -87,11 +78,6 @@ namespace iRacingReplayControl
             _viewSource.View.MoveCurrentTo(cam);
         }
 
-        private void MetroWindow_Closed(object sender, EventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
-
         private void ClickOnCam(object sender, RoutedEventArgs e)
         {
             Cam cam = (sender as Button).DataContext as Cam;
@@ -102,6 +88,11 @@ namespace iRacingReplayControl
         {
             Cam cam = (sender as Button).DataContext as Cam;
             Cams.Remove(cam);
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            Sim.Instance.Stop();
         }
     }
 }
