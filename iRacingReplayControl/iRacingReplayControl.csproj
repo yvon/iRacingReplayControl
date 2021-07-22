@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2544DE29-E720-4424-8BEC-B37525295EED}</ProjectGuid>
+    <ProjectGuid>{BE8E3B76-F7BA-41DB-8566-3B88CCB00477}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>iRacingReplayControl</RootNamespace>
     <AssemblyName>iRacingReplayControl</AssemblyName>
@@ -112,46 +112,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\iRacingSdkWrapper\iRacingSdkWrapper.csproj">
-      <Project>{d6db568b-35b3-49eb-8cb3-e4e5f1424247}</Project>
-      <Name>iRacingSdkWrapper</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\iRacingSimulator\iRacingSimulator.csproj">
-      <Project>{1765e7db-bee4-4324-a396-923d80b61ea0}</Project>
-      <Name>iRacingSimulator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\irsdkSharp\iRSDKSharp.csproj">
-      <Project>{72631b85-eb9a-473e-9b4c-65b355a9000d}</Project>
-      <Name>iRSDKSharp</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="vhs.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +125,23 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\iRacingSdkWrapper\iRacingSdkWrapper\iRacingSdkWrapper.csproj">
+      <Project>{d6db568b-35b3-49eb-8cb3-e4e5f1424247}</Project>
+      <Name>iRacingSdkWrapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\iRacingSdkWrapper\iRacingSimulator\iRacingSimulator.csproj">
+      <Project>{1765e7db-bee4-4324-a396-923d80b61ea0}</Project>
+      <Name>iRacingSimulator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\iRacingSdkWrapper\irsdkSharp\iRSDKSharp.csproj">
+      <Project>{72631b85-eb9a-473e-9b4c-65b355a9000d}</Project>
+      <Name>iRSDKSharp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
