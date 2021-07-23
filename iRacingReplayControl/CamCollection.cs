@@ -2,7 +2,7 @@
 
 namespace iRacingReplayControl
 {
-    public class CamCollection : ObservableCollection<Cam>
+    public class CamCollection : ObservableCollection<ReplayEvent>
     {
     }
 }

@@ -21,11 +21,9 @@
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition></ColumnDefinition>
                                                 <ColumnDefinition></ColumnDefinition>
-                                                <ColumnDefinition></ColumnDefinition>
                                             </Grid.ColumnDefinitions>
-                                            <Label Content="{Binding Time}"/>
-                                            <Label Content="{Binding CarIdx}" Grid.Column="1" ContentStringFormat="#{0}"/>
-                                            <Label Content="{Binding CamNumber}" Grid.Column="2" ContentStringFormat="Grp {0}"/>
+                                            <Label Content="{Binding Time}" Grid.Column="0"/>
+                                            <Label Content="{Binding Label}" Grid.Column="1"/>
                                         </Grid>
                                     </ControlTemplate>
                                 </Setter.Value>
@@ -39,8 +37,7 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Label FontSize="10" Content="Current cam" FontWeight="Bold"/>
             <Label FontSize="10" Content="{Binding Time}"/>
-            <Label FontSize="10" Content="{Binding CarIdx}" ContentStringFormat="Car #{0}"/>
-            <Label FontSize="10" Content="{Binding CamNumber}" ContentStringFormat="Grp {0}"/>
+            <Label FontSize="10" Content="{Binding Label}"/>
         </StackPanel>
     </StackPanel>
 </Window>

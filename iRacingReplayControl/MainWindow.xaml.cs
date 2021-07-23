@@ -1,7 +1,10 @@
 ﻿using iRacingSimulator;
+using iRacingSimulator.Drivers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,7 +30,7 @@ namespace iRacingReplayControl
             // Live sort cameras
             _viewSource = new CollectionViewSource();
             _viewSource.Source = Cams;
-            _viewSource.SortDescriptions.Add(new SortDescription("ReplayFrameNum", ListSortDirection.Ascending));
+            _viewSource.SortDescriptions.Add(new SortDescription("FrameNum", ListSortDirection.Ascending));
             _viewSource.IsLiveSortingRequested = true;
 
             // Bind data to interface
@@ -46,13 +49,13 @@ namespace iRacingReplayControl
         private void EventuallySwitchToCam()
         {
             IEnumerable<Cam> OrderedCams = _viewSource.View.Cast<Cam>();
-            Cam camToApply = OrderedCams.LastOrDefault(cam => cam.ReplayFrameNum <= _currentCam.ReplayFrameNum);
+            Cam camToApply = OrderedCams.LastOrDefault(cam => cam.FrameNum <= _currentCam.FrameNum);
 
             if (camToApply == null || camToApply == _lastApplied)
                 return;
 
             _lastApplied = camToApply;
-            Sim.Instance.Sdk.Camera.SwitchToCar(camToApply.CarIdx, camToApply.CamNumber);
+            camToApply.Apply();
             _viewSource.View.MoveCurrentTo(_lastApplied);
 
             int index = itemsControl.SelectedIndex;
@@ -62,26 +65,27 @@ namespace iRacingReplayControl
 
         private void OnTelemetryUpdated(object sender, iRacingSdkWrapper.SdkWrapper.TelemetryUpdatedEventArgs e)
         {
-            _currentCam.ReplayFrameNum = e.TelemetryInfo.ReplayFrameNum.Value;
+
+            _currentCam.FrameNum = e.TelemetryInfo.ReplayFrameNum.Value;
             _currentCam.CarIdx = e.TelemetryInfo.CamCarIdx.Value;
             _currentCam.CamNumber = e.TelemetryInfo.CamGroupNumber.Value;
 
             EventuallySwitchToCam();
         }
 
-        private void SetPositionToCam(Cam cam)
+        private void JumpToCam(Cam cam)
         {
             if (cam == null)
                 return;
 
-            Sim.Instance.Sdk.Replay.SetPosition(cam.ReplayFrameNum);
+            cam.JumpTo();
             _viewSource.View.MoveCurrentTo(cam);
         }
 
         private void ClickOnCam(object sender, RoutedEventArgs e)
         {
             Cam cam = (sender as Button).DataContext as Cam;
-            SetPositionToCam(cam);
+            JumpToCam(cam);
         }
 
         private void ClickOnDeleteCam(object sender, System.Windows.Input.MouseButtonEventArgs e)

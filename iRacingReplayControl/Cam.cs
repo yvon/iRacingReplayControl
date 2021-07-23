@@ -1,42 +1,27 @@
-﻿using System;
+﻿using iRacingSdkWrapper;
+using iRacingSimulator;
+using iRacingSimulator.Drivers;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace iRacingReplayControl
 {
-    public class Cam : INotifyPropertyChanged
+    public class Cam : ReplayEvent
     {
-        private int _replayFrameNum;
         private int _carIdx;
         private int _camNumber;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public Cam(Cam cam)
+        public Cam(Cam cam) : base(cam.FrameNum)
         {
-            _replayFrameNum = cam.ReplayFrameNum;
             _carIdx = cam.CarIdx;
             _camNumber = cam.CamNumber;
         }
+
         public Cam()
         {
         }
-
-        public int ReplayFrameNum
-        {
-            get => _replayFrameNum;
-            set
-            {
-                _replayFrameNum = value;
-                OnPropertyChanged();
-                OnPropertyChanged("Time");
-            }
-        }
-
-        public string Time
-        {
-            get => TimeSpan.FromSeconds(_replayFrameNum / 60).ToString();
-        }
+        public override string Label => Driver == null ? "" : $"{Driver.ShortName}. {CamName}";
 
         public int CarIdx
         {
@@ -44,7 +29,7 @@ namespace iRacingReplayControl
             set
             {
                 _carIdx = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Label");
             }
         }
 
@@ -54,13 +39,34 @@ namespace iRacingReplayControl
             set
             {
                 _camNumber = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Label");
             }
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        public string CamName
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            get
+            {
+                SessionInfo info = Sim.Instance.SessionInfo;
+                var query = info["CameraInfo"]["Groups"]["GroupNum", CamNumber];
+                return query["GroupName"].GetValue();
+            }
         }
+
+        public void Apply()
+        {
+            Sim.Instance.Sdk.Camera.SwitchToCar(CarNumber, CamNumber);
+        }
+
+        private Driver Driver
+        {
+            get
+            {
+                if (CarIdx == 0 || Sim.Instance.SessionInfo == null) return null;
+                return Driver.FromSessionInfo(Sim.Instance.SessionInfo, CarIdx);
+            }
+        }
+
+        private int CarNumber => int.Parse(Driver.CarNumber);
     }
 }
