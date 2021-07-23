@@ -18,11 +18,7 @@ namespace iRacingReplayControl
 
         public abstract string Label { get; }
         public int FrameNum { get; set; }
-
-        public string Time
-        {
-            get => TimeSpan.FromSeconds(FrameNum / 60).ToString();
-        }
+        public string Time => TimeSpan.FromSeconds(FrameNum / 60).ToString();
 
         public void JumpTo()
         {
