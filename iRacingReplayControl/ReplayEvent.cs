@@ -9,43 +9,24 @@ using System.Threading.Tasks;
 
 namespace iRacingReplayControl
 {
-    public abstract class ReplayEvent : INotifyPropertyChanged
+    public abstract class ReplayEvent
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        private int _frameNum;
-
         public ReplayEvent(int frameNum)
         {
-            _frameNum = frameNum;
-        }
-
-        public ReplayEvent()
-        {
+            FrameNum = frameNum;
         }
 
         public abstract string Label { get; }
+        public int FrameNum { get; set; }
 
-        public int FrameNum
-        {
-            get => _frameNum;
-            set
-            {
-                _frameNum = value;
-                OnPropertyChanged();
-                OnPropertyChanged("Time");
-            }
-        }
         public string Time
         {
             get => TimeSpan.FromSeconds(FrameNum / 60).ToString();
         }
+
         public void JumpTo()
         {
             Sim.Instance.Sdk.Replay.SetPosition(FrameNum);
-        }
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }

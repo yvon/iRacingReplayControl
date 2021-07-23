@@ -36,8 +36,8 @@
         </ListBox>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Label FontSize="10" Content="Current cam" FontWeight="Bold"/>
-            <Label FontSize="10" Content="{Binding Time}"/>
-            <Label FontSize="10" Content="{Binding Label}"/>
+            <Label FontSize="10" Content="{Binding CurrentCam.Time}"/>
+            <Label FontSize="10" Content="{Binding CurrentCam.Label}"/>
         </StackPanel>
     </StackPanel>
 </Window>

@@ -6,25 +6,26 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace iRacingReplayControl
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private Cam _currentCam;
         private Cam _lastApplied;
         private CollectionViewSource _viewSource;
 
+        public Cam CurrentCam { get; private set; }
         public CamCollection Cams { get; private set; }
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            _currentCam = new Cam();
             Cams = new CamCollection();
 
             // Live sort cameras
@@ -34,22 +35,22 @@ namespace iRacingReplayControl
             _viewSource.IsLiveSortingRequested = true;
 
             // Bind data to interface
-            DataContext = _currentCam;
+            DataContext = this;
             itemsControl.ItemsSource = _viewSource.View;
 
             Sim.Instance.TelemetryUpdated += OnTelemetryUpdated;
             Sim.Instance.Start();
         }
 
-        public void AddCam(object sender, RoutedEventArgs e)
+        private void AddCam(object sender, RoutedEventArgs e)
         {
-            Cams.Add(new Cam(_currentCam));
+            Cams.Add(CurrentCam);
         }
 
         private void EventuallySwitchToCam()
         {
             IEnumerable<Cam> OrderedCams = _viewSource.View.Cast<Cam>();
-            Cam camToApply = OrderedCams.LastOrDefault(cam => cam.FrameNum <= _currentCam.FrameNum);
+            Cam camToApply = OrderedCams.LastOrDefault(cam => cam.FrameNum <= CurrentCam.FrameNum);
 
             if (camToApply == null || camToApply == _lastApplied)
                 return;
@@ -65,11 +66,15 @@ namespace iRacingReplayControl
 
         private void OnTelemetryUpdated(object sender, iRacingSdkWrapper.SdkWrapper.TelemetryUpdatedEventArgs e)
         {
+            if (Sim.Instance.SessionInfo == null) return;
 
-            _currentCam.FrameNum = e.TelemetryInfo.ReplayFrameNum.Value;
-            _currentCam.CarIdx = e.TelemetryInfo.CamCarIdx.Value;
-            _currentCam.CamNumber = e.TelemetryInfo.CamGroupNumber.Value;
+            CurrentCam = new Cam(
+                e.TelemetryInfo.ReplayFrameNum.Value,
+                e.TelemetryInfo.CamCarIdx.Value,
+                e.TelemetryInfo.CamGroupNumber.Value
+            );
 
+            OnPropertyChanged("CurrentCam");
             EventuallySwitchToCam();
         }
 
@@ -97,6 +102,11 @@ namespace iRacingReplayControl
         private void Window_Closed(object sender, EventArgs e)
         {
             Sim.Instance.Stop();
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }
