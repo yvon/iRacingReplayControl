@@ -18,6 +18,8 @@ namespace iRacingReplayControl
 
         public abstract string Label { get; }
         public int FrameNum { get; set; }
+        public ReplayEvent Prev;
+        public ReplayEvent Next;
         public string Time => TimeSpan.FromSeconds(FrameNum / 60).ToString();
 
         public void JumpTo()
@@ -25,6 +27,6 @@ namespace iRacingReplayControl
             Sim.Instance.Sdk.Replay.SetPosition(FrameNum);
         }
 
-        public abstract void Apply();
+        public abstract void Apply(ReplayEvent lastApplied);
     }
 }

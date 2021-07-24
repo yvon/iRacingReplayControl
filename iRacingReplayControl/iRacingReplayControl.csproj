@@ -106,6 +106,7 @@
     </Compile>
     <Compile Include="Cam.cs" />
     <Compile Include="CamCollection.cs" />
+    <Compile Include="Jump.cs" />
     <Compile Include="Driver.cs" />
     <Compile Include="ReplayEvent.cs" />
     <Compile Include="MainWindow.xaml.cs">

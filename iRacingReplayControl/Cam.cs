@@ -22,7 +22,7 @@ namespace iRacingReplayControl
 
         public override string Label => _label;
 
-        public override void Apply()
+        public override void Apply(ReplayEvent lastApplied)
         {
             Sim.Instance.Sdk.Camera.SwitchToCar(_carNumber, _camNumber);
         }

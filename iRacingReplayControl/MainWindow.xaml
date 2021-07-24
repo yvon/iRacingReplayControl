@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:iRacingReplayControl"
         mc:Ignorable="d"
-        Title="iRacing Replay Control" SizeToContent="WidthAndHeight" Closed="Window_Closed" ResizeMode="NoResize" Icon="vhs.ico">
+        Title="iRacing Replay Control" SizeToContent="Height" Width="250" Closed="Window_Closed" ResizeMode="NoResize" Icon="vhs.ico">
     <StackPanel Margin="5">
-        <Button Content="Add current camera" Click="AddCam" Height="28" Margin="0 5"/>
+        <Button Content="Add current camera" Click="AddCam" Height="28" Margin="0"/>
+        <Button Content="Add a jump in time" Click="AddJump" Height="20" Margin="0 5" FontSize="10" Background="AliceBlue"/>
         <ListBox x:Name="itemsControl" Margin="0 5" ItemsSource="{Binding}" MaxHeight="300" ScrollViewer.VerticalScrollBarVisibility="Visible" BorderThickness="0">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -30,10 +31,11 @@
                             </Setter>
                         </Style>
                     </DataTemplate.Resources>
-                    <Button Click="ClickOnCam" MouseRightButtonDown="ClickOnDeleteCam" Cursor="Hand"/>
+                    <Button Click="ClickOnReplayEvent" MouseRightButtonDown="ClickOnDeleteCam" Cursor="Hand"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ListBox>
+        <Label Content="Right click to delete an element" HorizontalAlignment="Center" FontSize="8" />
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Label FontSize="10" Content="Current cam" FontWeight="Bold"/>
             <Label FontSize="10" Content="{Binding CurrentCam.Time}"/>

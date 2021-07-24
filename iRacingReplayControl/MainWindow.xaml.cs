@@ -40,15 +40,20 @@ namespace iRacingReplayControl
             Cams.Add(CurrentCam);
         }
 
+        private void AddJump(object sender, RoutedEventArgs e)
+        {
+            Cams.Add(new Jump(CurrentCam.FrameNum));
+        }
+
         private void EventuallySwitchToCam()
         {
             ReplayEvent camToApply = Cams.Current(CurrentCam.FrameNum);
  
             if (camToApply == null || camToApply == _lastApplied)
               return;
-             
+
+            camToApply.Apply(_lastApplied);
             _lastApplied = camToApply;
-            camToApply.Apply();
             itemsControl.SelectedItem = camToApply;
 
             // Autoscroll
@@ -71,18 +76,19 @@ namespace iRacingReplayControl
             EventuallySwitchToCam();
         }
 
-        private void JumpToCam(Cam cam)
+        private void JumpTo(ReplayEvent replayEvent)
         {
-            if (cam == null)
+            if (replayEvent == null)
                 return;
 
-            cam.JumpTo();
+            replayEvent.JumpTo();
         }
 
-        private void ClickOnCam(object sender, RoutedEventArgs e)
+        private void ClickOnReplayEvent(object sender, RoutedEventArgs e)
         {
-            Cam cam = (sender as Button).DataContext as Cam;
-            JumpToCam(cam);
+            ReplayEvent replayEvent = (sender as Button).DataContext as ReplayEvent;
+            // itemsControl.SelectedItem = replayEvent;
+            JumpTo(replayEvent);
         }
 
         private void ClickOnDeleteCam(object sender, System.Windows.Input.MouseButtonEventArgs e)
