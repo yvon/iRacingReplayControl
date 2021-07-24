@@ -13,15 +13,15 @@
                 <Run Text="{Binding CurrentCam.Time, Mode=OneWay, StringFormat=- {0}}"/>
                 <Run Text="{Binding CurrentCam.FrameNum, Mode=OneWay, StringFormat=(frame {0})}"/>
             </TextBlock>
-            <Button Click="AddCam" Margin="0 4 0 2" Padding="0 5" FontSize="14">
+            <Button Click="AddCam" Margin="0 4 0 2" Padding="0 5" FontSize="14" IsEnabled="{Binding Connected}">
                 <StackPanel>
                     <TextBlock FontSize="10" Text="Save current camera" HorizontalAlignment="Center"/>
                     <TextBlock Text="{Binding CurrentCam.Label, Mode=OneWay}" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
-            <Button Content="Add a time jump" Click="AddJump" Margin="0 2"/>
+            <Button Content="Add a time jump" Click="AddJump" Margin="0 2" IsEnabled="{Binding Connected}"/>
         </StackPanel>
-        <TextBlock Text="Saved events" HorizontalAlignment="Center" FontWeight="Bold" Margin="0 15 0 0"/>
+        <TextBlock Text="Saved transitions" HorizontalAlignment="Center" FontWeight="Bold" Margin="0 15 0 0"/>
         <ListBox x:Name="itemsControl" ItemsSource="{Binding}" MaxHeight="300" ScrollViewer.VerticalScrollBarVisibility="Visible" BorderThickness="0" HorizontalContentAlignment="Stretch">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -48,6 +48,6 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ListBox>
-        <Label Content="Left click jumps to event, right click deletes it" HorizontalAlignment="Center" FontSize="10" FontStyle="Italic" />
+        <Label Content="Left click jumps to transition, right click deletes it" HorizontalAlignment="Center" FontSize="10" FontStyle="Italic" />
     </StackPanel>
 </Window>

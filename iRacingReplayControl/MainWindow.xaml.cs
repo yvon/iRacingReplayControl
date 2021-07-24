@@ -16,8 +16,32 @@ namespace iRacingReplayControl
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private ReplayEvent _lastApplied;
+        private bool _connected = false;
+        private Cam _currentCam; 
 
-        public Cam CurrentCam { get; private set; }
+        public bool Connected
+        {
+            get => _connected;
+            private set
+            {
+                if (_connected != value)
+                {
+                    _connected = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public Cam CurrentCam
+        {
+            get => _currentCam;
+            private set
+            {
+                _currentCam = value;
+                OnPropertyChanged();
+            }
+        }
+
         public CamCollection Cams { get; private set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -31,8 +55,14 @@ namespace iRacingReplayControl
             DataContext = this;
             itemsControl.ItemsSource = Cams.ObservableCollection;
 
+            Sim.Instance.Disconnected += OnDisconnection;
             Sim.Instance.TelemetryUpdated += OnTelemetryUpdated;
             Sim.Instance.Start();
+        }
+
+        private void OnDisconnection(object sender, EventArgs e)
+        {
+            Connected = false;
         }
 
         private void AddCam(object sender, RoutedEventArgs e)
@@ -72,7 +102,7 @@ namespace iRacingReplayControl
                 e.TelemetryInfo.CamGroupNumber.Value
             );
 
-            OnPropertyChanged("CurrentCam");
+            Connected = true; // TODO: listen to connection events
             EventuallySwitchToCam();
         }
 
