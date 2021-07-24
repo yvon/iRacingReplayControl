@@ -4,6 +4,11 @@
              xmlns:local="clr-namespace:iRacingReplayControl"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <!-- https://coolors.co/ff6700-ebebeb-c0c0c0-3a6ea5-004e98 -->
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#EBEBEB"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="#C0C0C0"/>
+        </Style>
     </Application.Resources>
 </Application>

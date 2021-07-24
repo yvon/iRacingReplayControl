@@ -10,7 +10,7 @@ namespace iRacingReplayControl
 {
     public class Jump : ReplayEvent
     {
-        public override string Label => "Jump";
+        public override string Label => "Time jump";
 
         public Jump(int frameNum) : base(frameNum)
         {

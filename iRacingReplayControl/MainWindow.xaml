@@ -5,11 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:iRacingReplayControl"
         mc:Ignorable="d"
-        Title="iRacing Replay Control" SizeToContent="Height" Width="250" Closed="Window_Closed" ResizeMode="NoResize" Icon="vhs.ico">
+        Title="iRacing Replay Control" SizeToContent="Height" Width="290" Closed="Window_Closed" ResizeMode="NoResize" Icon="vhs.ico">
     <StackPanel Margin="5">
-        <Button Content="Add current camera" Click="AddCam" Height="28" Margin="0"/>
-        <Button Content="Add a jump in time" Click="AddJump" Height="20" Margin="0 5" FontSize="10" Background="AliceBlue"/>
-        <ListBox x:Name="itemsControl" Margin="0 5" ItemsSource="{Binding}" MaxHeight="300" ScrollViewer.VerticalScrollBarVisibility="Visible" BorderThickness="0">
+        <StackPanel>
+            <TextBlock HorizontalAlignment="Center">
+                <Bold>At current position</Bold>
+                <Run Text="{Binding CurrentCam.Time, Mode=OneWay, StringFormat=- {0}}"/>
+                <Run Text="{Binding CurrentCam.FrameNum, Mode=OneWay, StringFormat=(frame {0})}"/>
+            </TextBlock>
+            <Button Click="AddCam" Margin="0 4 0 2" Padding="0 5" FontSize="14">
+                <StackPanel>
+                    <TextBlock FontSize="10" Text="Save current camera" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding CurrentCam.Label, Mode=OneWay}" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button Content="Add a time jump" Click="AddJump" Margin="0 2"/>
+        </StackPanel>
+        <TextBlock Text="Saved events" HorizontalAlignment="Center" FontWeight="Bold" Margin="0 15 0 0"/>
+        <ListBox x:Name="itemsControl" ItemsSource="{Binding}" MaxHeight="300" ScrollViewer.VerticalScrollBarVisibility="Visible" BorderThickness="0" HorizontalContentAlignment="Stretch">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <DataTemplate.Resources>
@@ -20,8 +33,8 @@
                                     <ControlTemplate TargetType="Button">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition></ColumnDefinition>
-                                                <ColumnDefinition></ColumnDefinition>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
                                             <Label Content="{Binding Time}" Grid.Column="0"/>
                                             <Label Content="{Binding Label}" Grid.Column="1"/>
@@ -35,11 +48,6 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ListBox>
-        <Label Content="Right click to delete an element" HorizontalAlignment="Center" FontSize="8" />
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Label FontSize="10" Content="Current cam" FontWeight="Bold"/>
-            <Label FontSize="10" Content="{Binding CurrentCam.Time}"/>
-            <Label FontSize="10" Content="{Binding CurrentCam.Label}"/>
-        </StackPanel>
+        <Label Content="Left click jumps to event, right click deletes it" HorizontalAlignment="Center" FontSize="10" FontStyle="Italic" />
     </StackPanel>
 </Window>
