@@ -45,7 +45,7 @@ namespace iRacingReplayControl
 
         public Transition Current(int frameNum)
         {
-            return ObservableCollection.LastOrDefault(e => e.FrameNum <= frameNum);
+            return ObservableCollection.LastOrDefault(e => e.FrameNum < frameNum);
         }
 
         private void Prepend(Transition transition)

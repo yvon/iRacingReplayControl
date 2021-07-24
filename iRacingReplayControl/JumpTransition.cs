@@ -14,9 +14,10 @@ namespace iRacingReplayControl
         {
             if (Next != null)
             {
-                Transition target = Next == lastApplied ? Prev : Next;
+                int playBackSpeed = Sim.Instance.Telemetry.ReplayPlaySpeed.Value;
+                Transition target = Next == lastApplied ? this : Next;
                 target.JumpTo();
-                Sim.Instance.Sdk.Replay.SetPlaybackSpeed(1);
+                Sim.Instance.Sdk.Replay.SetPlaybackSpeed(playBackSpeed);
             }
         }
     }
