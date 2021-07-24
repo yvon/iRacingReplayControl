@@ -1,6 +1,5 @@
 ﻿using iRacingSdkWrapper;
 using iRacingSimulator;
-using iRacingSimulator.Drivers;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -16,9 +15,9 @@ namespace iRacingReplayControl
         public Cam(int frameNum, int carIdx, int camNumber) : base(frameNum)
         {
             _camNumber = camNumber;
-            Driver driver = Driver.FromSessionInfo(Sim.Instance.SessionInfo, carIdx);
-            _carNumber = int.Parse(driver.CarNumber);
-            _label = $"{driver.ShortName}. {GetCameName()}";
+            Driver driver = Driver.FromCarIdx(carIdx);
+            _carNumber = driver.CarNumber;
+            _label = $"{driver.ShortName}. {CamName}";
         }
 
         public override string Label => _label;
@@ -28,11 +27,14 @@ namespace iRacingReplayControl
             Sim.Instance.Sdk.Camera.SwitchToCar(_carNumber, _camNumber);
         }
 
-        private string GetCameName()
+        private string CamName
         {
-            SessionInfo info = Sim.Instance.SessionInfo;
-            YamlQuery camQuery = info["CameraInfo"]["Groups"]["GroupNum", _camNumber];
-            return camQuery["GroupName"].GetValue();
+            get
+            {
+                SessionInfo info = Sim.Instance.SessionInfo;
+                YamlQuery camQuery = info["CameraInfo"]["Groups"]["GroupNum", _camNumber];
+                return camQuery["GroupName"].GetValue();
+            }
         }
     }
 }
