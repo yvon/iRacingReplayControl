@@ -24,5 +24,7 @@ namespace iRacingReplayControl
         {
             Sim.Instance.Sdk.Replay.SetPosition(FrameNum);
         }
+
+        public abstract void Apply();
     }
 }

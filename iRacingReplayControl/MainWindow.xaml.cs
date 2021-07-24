@@ -15,8 +15,7 @@ namespace iRacingReplayControl
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private Cam _lastApplied;
-        private CollectionViewSource _viewSource;
+        private ReplayEvent _lastApplied;
 
         public Cam CurrentCam { get; private set; }
         public CamCollection Cams { get; private set; }
@@ -28,15 +27,9 @@ namespace iRacingReplayControl
 
             Cams = new CamCollection();
 
-            // Live sort cameras
-            _viewSource = new CollectionViewSource();
-            _viewSource.Source = Cams;
-            _viewSource.SortDescriptions.Add(new SortDescription("FrameNum", ListSortDirection.Ascending));
-            _viewSource.IsLiveSortingRequested = true;
-
             // Bind data to interface
             DataContext = this;
-            itemsControl.ItemsSource = _viewSource.View;
+            itemsControl.ItemsSource = Cams.ObservableCollection;
 
             Sim.Instance.TelemetryUpdated += OnTelemetryUpdated;
             Sim.Instance.Start();
@@ -49,16 +42,16 @@ namespace iRacingReplayControl
 
         private void EventuallySwitchToCam()
         {
-            IEnumerable<Cam> OrderedCams = _viewSource.View.Cast<Cam>();
-            Cam camToApply = OrderedCams.LastOrDefault(cam => cam.FrameNum <= CurrentCam.FrameNum);
-
+            ReplayEvent camToApply = Cams.Current(CurrentCam.FrameNum);
+ 
             if (camToApply == null || camToApply == _lastApplied)
-                return;
-
+              return;
+             
             _lastApplied = camToApply;
             camToApply.Apply();
-            _viewSource.View.MoveCurrentTo(_lastApplied);
+            itemsControl.SelectedItem = camToApply;
 
+            // Autoscroll
             int index = itemsControl.SelectedIndex;
             object item = itemsControl.Items.GetItemAt(index);
             itemsControl.ScrollIntoView(item);
@@ -84,7 +77,6 @@ namespace iRacingReplayControl
                 return;
 
             cam.JumpTo();
-            _viewSource.View.MoveCurrentTo(cam);
         }
 
         private void ClickOnCam(object sender, RoutedEventArgs e)
