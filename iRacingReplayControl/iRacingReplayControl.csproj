@@ -104,11 +104,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Cam.cs" />
-    <Compile Include="CamCollection.cs" />
-    <Compile Include="Jump.cs" />
+    <Compile Include="CamTransition.cs" />
+    <Compile Include="TransitionCollection.cs" />
+    <Compile Include="JumpTransition.cs" />
     <Compile Include="Driver.cs" />
-    <Compile Include="ReplayEvent.cs" />
+    <Compile Include="Transition.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

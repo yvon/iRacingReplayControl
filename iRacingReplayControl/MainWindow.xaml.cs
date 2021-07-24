@@ -1,23 +1,17 @@
 ﻿using iRacingSimulator;
-using iRacingSimulator.Drivers;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace iRacingReplayControl
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private ReplayEvent _lastApplied;
+        private Transition _lastApplied;
         private bool _connected = false;
-        private Cam _currentCam; 
+        private CamTransition _currentCam;
 
         public bool Connected
         {
@@ -32,7 +26,7 @@ namespace iRacingReplayControl
             }
         }
 
-        public Cam CurrentCam
+        public CamTransition CurrentCam
         {
             get => _currentCam;
             private set
@@ -42,18 +36,18 @@ namespace iRacingReplayControl
             }
         }
 
-        public CamCollection Cams { get; private set; }
+        public TransitionCollection Transitions { get; private set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            Cams = new CamCollection();
+            Transitions = new TransitionCollection();
 
             // Bind data to interface
             DataContext = this;
-            itemsControl.ItemsSource = Cams.ObservableCollection;
+            itemsControl.ItemsSource = Transitions.ObservableCollection;
 
             Sim.Instance.Disconnected += OnDisconnection;
             Sim.Instance.TelemetryUpdated += OnTelemetryUpdated;
@@ -65,26 +59,21 @@ namespace iRacingReplayControl
             Connected = false;
         }
 
-        private void AddCam(object sender, RoutedEventArgs e)
+        private void AddCamTransition(object sender, RoutedEventArgs e)
         {
-            Cams.Add(CurrentCam);
+            Transitions.Add(CurrentCam);
         }
 
-        private void AddJump(object sender, RoutedEventArgs e)
+        private void AddJumpTransition(object sender, RoutedEventArgs e)
         {
-            Cams.Add(new Jump(CurrentCam.FrameNum));
+            Transitions.Add(new JumpTransition(CurrentCam.FrameNum));
         }
 
-        private void EventuallySwitchToCam()
+        private void ApplyTransition(Transition transition)
         {
-            ReplayEvent camToApply = Cams.Current(CurrentCam.FrameNum);
- 
-            if (camToApply == null || camToApply == _lastApplied)
-              return;
-
-            camToApply.Apply(_lastApplied);
-            _lastApplied = camToApply;
-            itemsControl.SelectedItem = camToApply;
+            transition.Apply(_lastApplied);
+            _lastApplied = transition;
+            itemsControl.SelectedItem = transition;
 
             // Autoscroll
             int index = itemsControl.SelectedIndex;
@@ -92,39 +81,48 @@ namespace iRacingReplayControl
             itemsControl.ScrollIntoView(item);
         }
 
+        private void ApplyTransitions()
+        {
+            Transition candidate = Transitions.Current(CurrentCam.FrameNum);
+
+            if (candidate != null && candidate != _lastApplied)
+            {
+                ApplyTransition(candidate);
+            }
+        }
+
         private void OnTelemetryUpdated(object sender, iRacingSdkWrapper.SdkWrapper.TelemetryUpdatedEventArgs e)
         {
             if (Sim.Instance.SessionInfo == null) return;
 
-            CurrentCam = new Cam(
+            CurrentCam = new CamTransition(
                 e.TelemetryInfo.ReplayFrameNum.Value,
                 e.TelemetryInfo.CamCarIdx.Value,
                 e.TelemetryInfo.CamGroupNumber.Value
             );
 
             Connected = true; // TODO: listen to connection events
-            EventuallySwitchToCam();
+            ApplyTransitions();
         }
 
-        private void JumpTo(ReplayEvent replayEvent)
+        private void JumpTo(Transition transition)
         {
-            if (replayEvent == null)
+            if (transition == null)
                 return;
 
-            replayEvent.JumpTo();
+            transition.JumpTo();
         }
 
-        private void ClickOnReplayEvent(object sender, RoutedEventArgs e)
+        private void ClickOnTransition(object sender, RoutedEventArgs e)
         {
-            ReplayEvent replayEvent = (sender as Button).DataContext as ReplayEvent;
-            // itemsControl.SelectedItem = replayEvent;
-            JumpTo(replayEvent);
+            Transition transition = (sender as Button).DataContext as Transition;
+            JumpTo(transition);
         }
 
-        private void ClickOnDeleteCam(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void RightClickOnTransition(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Cam cam = (sender as Button).DataContext as Cam;
-            Cams.Remove(cam);
+            Transition transition = (sender as Button).DataContext as Transition;
+            _ = Transitions.Remove(transition);
         }
 
         private void Window_Closed(object sender, EventArgs e)

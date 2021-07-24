@@ -1,25 +1,19 @@
 ﻿using iRacingSimulator;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace iRacingReplayControl
 {
-    public abstract class ReplayEvent
+    public abstract class Transition
     {
-        public ReplayEvent(int frameNum)
+        public Transition(int frameNum)
         {
             FrameNum = frameNum;
         }
 
         public abstract string Label { get; }
         public int FrameNum { get; set; }
-        public ReplayEvent Prev;
-        public ReplayEvent Next;
+        public Transition Prev;
+        public Transition Next;
         public string Time => TimeSpan.FromSeconds(FrameNum / 60).ToString();
 
         public void JumpTo()
@@ -27,6 +21,6 @@ namespace iRacingReplayControl
             Sim.Instance.Sdk.Replay.SetPosition(FrameNum);
         }
 
-        public abstract void Apply(ReplayEvent lastApplied);
+        public abstract void Apply(Transition lastApplied);
     }
 }

@@ -13,13 +13,13 @@
                 <Run Text="{Binding CurrentCam.Time, Mode=OneWay, StringFormat=- {0}}"/>
                 <Run Text="{Binding CurrentCam.FrameNum, Mode=OneWay, StringFormat=(frame {0})}"/>
             </TextBlock>
-            <Button Click="AddCam" Margin="0 4 0 2" Padding="0 5" FontSize="14" IsEnabled="{Binding Connected}">
+            <Button Click="AddCamTransition" Margin="0 4 0 2" Padding="0 5" FontSize="14" IsEnabled="{Binding Connected}">
                 <StackPanel>
                     <TextBlock FontSize="10" Text="Save current camera" HorizontalAlignment="Center"/>
                     <TextBlock Text="{Binding CurrentCam.Label, Mode=OneWay}" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
-            <Button Content="Add a time jump" Click="AddJump" Margin="0 2" IsEnabled="{Binding Connected}"/>
+            <Button Content="Add a time jump" Click="AddJumpTransition" Margin="0 2" IsEnabled="{Binding Connected}"/>
         </StackPanel>
         <TextBlock Text="Saved transitions" HorizontalAlignment="Center" FontWeight="Bold" Margin="0 15 0 0"/>
         <ListBox x:Name="itemsControl" ItemsSource="{Binding}" MaxHeight="300" ScrollViewer.VerticalScrollBarVisibility="Visible" BorderThickness="0" HorizontalContentAlignment="Stretch">
@@ -44,7 +44,7 @@
                             </Setter>
                         </Style>
                     </DataTemplate.Resources>
-                    <Button Click="ClickOnReplayEvent" MouseRightButtonDown="ClickOnDeleteCam" Cursor="Hand"/>
+                    <Button Click="ClickOnTransition" MouseRightButtonDown="RightClickOnTransition" Cursor="Hand"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ListBox>

@@ -1,18 +1,15 @@
 ﻿using iRacingSdkWrapper;
 using iRacingSimulator;
-using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace iRacingReplayControl
 {
-    public class Cam : ReplayEvent
+    public class CamTransition : Transition
     {
         private readonly int _carNumber;
         private readonly int _camNumber;
         private readonly string _label;
 
-        public Cam(int frameNum, int carIdx, int camNumber) : base(frameNum)
+        public CamTransition(int frameNum, int carIdx, int camNumber) : base(frameNum)
         {
             _camNumber = camNumber;
             Driver driver = Driver.FromCarIdx(carIdx);
@@ -22,7 +19,7 @@ namespace iRacingReplayControl
 
         public override string Label => _label;
 
-        public override void Apply(ReplayEvent lastApplied)
+        public override void Apply(Transition lastApplied)
         {
             Sim.Instance.Sdk.Camera.SwitchToCar(_carNumber, _camNumber);
         }
