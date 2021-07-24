@@ -2,7 +2,7 @@
 
 Configure automatic camera changes for replay viewing or recording.
 
-<img src="https://github.com/yvon/iRacingReplayControl/raw/master/screenshot.png" width="210"/>
+<img src="https://github.com/yvon/iRacingReplayControl/raw/master/screenshot.png" width="278"/>
 
 ## INSTALL
 
