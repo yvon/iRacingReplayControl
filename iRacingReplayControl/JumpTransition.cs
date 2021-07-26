@@ -10,15 +10,15 @@ namespace iRacingReplayControl
         {
         }
 
-        public override void Apply(Transition lastApplied)
+        public override bool Apply(int playBackSpeed, State state)
         {
-            if (Next != null)
-            {
-                int playBackSpeed = Sim.Instance.Telemetry.ReplayPlaySpeed.Value;
-                Transition target = Next == lastApplied ? this : Next;
-                target.JumpTo();
-                Sim.Instance.Sdk.Replay.SetPlaybackSpeed(playBackSpeed);
-            }
+            if (Next == null || playBackSpeed == 0)
+                return false;
+
+            Transition target = playBackSpeed > 0 ? Next : this;
+            state.FrameNum = target.FrameNum;
+            state.PlayBackSpeed = playBackSpeed;
+            return true;
         }
     }
 }

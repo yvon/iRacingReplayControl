@@ -19,9 +19,13 @@ namespace iRacingReplayControl
 
         public override string Label => _label;
 
-        public override void Apply(Transition lastApplied)
+        public override bool Apply(int playBackSpeed, State state)
         {
-            Sim.Instance.Sdk.Camera.SwitchToCar(_carNumber, _camNumber);
+            state.CarNumber = _carNumber;
+            state.CamNumber = _camNumber;
+            state.FrameNum = null;
+            state.PlayBackSpeed = null;
+            return true;
         }
 
         private string CamName

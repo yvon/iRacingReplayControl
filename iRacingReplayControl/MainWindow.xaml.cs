@@ -47,7 +47,7 @@ namespace iRacingReplayControl
 
             // Bind data to interface
             DataContext = this;
-            itemsControl.ItemsSource = Transitions.ObservableCollection;
+            itemsControl.ItemsSource = Transitions.Collection;
 
             Sim.Instance.Disconnected += OnDisconnection;
             Sim.Instance.TelemetryUpdated += OnTelemetryUpdated;
@@ -69,25 +69,36 @@ namespace iRacingReplayControl
             Transitions.Add(new JumpTransition(CurrentCam.FrameNum));
         }
 
-        private void ApplyTransition(Transition transition)
+        private void SelectLastAppliedTransition()
         {
-            transition.Apply(_lastApplied);
-            _lastApplied = transition;
-            itemsControl.SelectedItem = transition;
+            if (_lastApplied == null)
+                return;
 
-            // Autoscroll
-            int index = itemsControl.SelectedIndex;
-            object item = itemsControl.Items.GetItemAt(index);
-            itemsControl.ScrollIntoView(item);
+            int playBackSpeed = Sim.Instance.Telemetry.ReplayPlaySpeed.Value;
+
+            // Don't change selection if replay is paused.
+            // So a click on a transition doesn't loose focus even if multiple transitions are stored for the same frame number.
+            if (playBackSpeed != 0 && itemsControl.SelectedItem != _lastApplied)
+            {
+                SelectTransition(_lastApplied);
+
+                // Autoscroll
+                int index = itemsControl.SelectedIndex;
+                object item = itemsControl.Items.GetItemAt(index);
+                itemsControl.ScrollIntoView(item);
+            }
         }
 
         private void ApplyTransitions()
         {
-            Transition candidate = Transitions.Current(CurrentCam.FrameNum);
+            State state = new State();
+            int playBackSpeed = Sim.Instance.Telemetry.ReplayPlaySpeed.Value;
+            Transition lastApplied = Transitions.Apply(playBackSpeed, _currentCam.FrameNum, state);
 
-            if (candidate != null && candidate != _lastApplied)
+            if (_lastApplied != lastApplied)
             {
-                ApplyTransition(candidate);
+                state.Apply();
+                _lastApplied = lastApplied;
             }
         }
 
@@ -103,6 +114,7 @@ namespace iRacingReplayControl
 
             Connected = true; // TODO: listen to connection events
             ApplyTransitions();
+            SelectLastAppliedTransition();
         }
 
         private void JumpTo(Transition transition)
@@ -113,10 +125,16 @@ namespace iRacingReplayControl
             transition.JumpTo();
         }
 
+        private void SelectTransition(Transition transition)
+        {
+            itemsControl.SelectedItem = transition;
+        }
+
         private void ClickOnTransition(object sender, RoutedEventArgs e)
         {
             Transition transition = (sender as Button).DataContext as Transition;
             JumpTo(transition);
+            SelectTransition(transition);
         }
 
         private void RightClickOnTransition(object sender, System.Windows.Input.MouseButtonEventArgs e)

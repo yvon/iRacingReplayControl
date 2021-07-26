@@ -21,6 +21,6 @@ namespace iRacingReplayControl
             Sim.Instance.Sdk.Replay.SetPosition(FrameNum);
         }
 
-        public abstract void Apply(Transition lastApplied);
+        public abstract bool Apply(int playBackSpeed, State state);
     }
 }
