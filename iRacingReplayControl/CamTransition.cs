@@ -5,33 +5,50 @@ namespace iRacingReplayControl
 {
     public class CamTransition : Transition
     {
-        private readonly int _carNumber;
-        private readonly int _camNumber;
-        private readonly string _label;
+        private int _carIdx;
+        private readonly string _label = null;
+        private Driver _driver = null;
+
+        public int CarIdx
+        {
+            get => _carIdx;
+            set
+            {
+                _carIdx = value;
+                _driver = Driver.FromCarIdx(value);
+            }
+        }
+
+        public int CamNumber { get; set; }
+
+        public override string Label => $"{_driver.ShortName}. {CamName}";
+
+        public CamTransition()
+        {
+
+        }
 
         public CamTransition(int frameNum, int carIdx, int camNumber) : base(frameNum)
         {
-            _camNumber = camNumber;
-            Driver driver = Driver.FromCarIdx(carIdx);
-            _carNumber = driver.CarNumber;
-            _label = $"{driver.ShortName}. {CamName}";
+            CarIdx = carIdx;
+            CamNumber = camNumber;
         }
-
-        public override string Label => _label;
 
         public override bool Apply(State state)
         {
-            state.CarNumber = _carNumber;
-            state.CamNumber = _camNumber;
+            state.CarNumber = CarNumber;
+            state.CamNumber = CamNumber;
             return true;
         }
+
+        private int CarNumber => _driver.CarNumber;
 
         private string CamName
         {
             get
             {
                 SessionInfo info = Sim.Instance.SessionInfo;
-                YamlQuery camQuery = info["CameraInfo"]["Groups"]["GroupNum", _camNumber];
+                YamlQuery camQuery = info["CameraInfo"]["Groups"]["GroupNum", CamNumber];
                 return camQuery["GroupName"].GetValue();
             }
         }

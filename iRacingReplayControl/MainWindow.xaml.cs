@@ -128,7 +128,13 @@ namespace iRacingReplayControl
                 e.TelemetryInfo.CamGroupNumber.Value
             );
 
-            Connected = true; // TODO: listen to connection events
+            if (Connected == false) // TODO: listen to connection events
+            {
+                Connected = true;
+                int sessionId = Sim.Instance.SessionData.SubsessionId;
+                Debug.Print($"SessionId: {sessionId}");
+                Transitions.DeSerialize(sessionId);
+            }
 
             if (Sim.Instance.Telemetry.ReplayPlaySpeed.Value != 1)
             {

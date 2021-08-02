@@ -4,6 +4,10 @@
     {
         public override string Label => "Time jump";
 
+        public JumpTransition()
+        {
+        }
+
         public JumpTransition(int frameNum) : base(frameNum)
         {
         }
