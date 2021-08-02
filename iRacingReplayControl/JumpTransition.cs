@@ -1,6 +1,4 @@
-﻿using iRacingSimulator;
-
-namespace iRacingReplayControl
+﻿namespace iRacingReplayControl
 {
     public class JumpTransition : Transition
     {
@@ -10,15 +8,13 @@ namespace iRacingReplayControl
         {
         }
 
-        public override bool Apply(int playBackSpeed, State state)
+        public override bool Apply(State state)
         {
-            if (Next == null || playBackSpeed == 0)
-                return false;
+            if (Next == null) return false;
 
-            Transition target = playBackSpeed > 0 ? Next : this;
-            state.FrameNum = target.FrameNum;
-            state.PlayBackSpeed = playBackSpeed;
-            return true;
+            state.FrameNum = Next.FrameNum;
+            // Immediatly apply next transition to avoid flickering
+            return Next.Apply(state);
         }
     }
 }

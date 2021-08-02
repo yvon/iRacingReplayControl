@@ -23,8 +23,9 @@ namespace iRacingReplayControl
             }
 
             // Chain events
-            current.Next = transition;
             transition.Prev = current;
+            transition.Next = current.Next;
+            current.Next = transition;
 
             // Insert in collection
             int index = Collection.IndexOf(current) + 1;
@@ -34,34 +35,18 @@ namespace iRacingReplayControl
         public bool Remove(Transition transition)
         {
             Transition prev = transition.Prev;
+            Transition next = transition.Next;
 
             if (prev != null)
                 prev.Next = transition.Next;
+            if (next != null)
+                next.Prev = transition.Prev;
 
             return Collection.Remove(transition);
         }
 
-        private Transition ReverseApply(int playBackSpeed, int frameNum, State state)
+        public Transition Apply(int frameNum, State state)
         {
-            Transition lastApplied = null;
-
-            foreach (Transition transition in Collection.Reverse())
-            {
-                if (transition.Apply(playBackSpeed, state))
-                    lastApplied = transition;
-
-                if (transition.FrameNum <= frameNum)
-                    break;
-            }
-
-            return lastApplied;
-        }
-
-        public Transition Apply(int playBackSpeed, int frameNum, State state)
-        {
-            if (playBackSpeed < 0)
-                return ReverseApply(playBackSpeed, frameNum, state);
-
             Transition lastApplied = null;
 
             foreach (Transition transition in Collection)
@@ -69,7 +54,7 @@ namespace iRacingReplayControl
                 if (transition.FrameNum > frameNum)
                     break;
 
-                if (transition.Apply(playBackSpeed, state))
+                if (transition.Apply(state))
                     lastApplied = transition;
             }
 

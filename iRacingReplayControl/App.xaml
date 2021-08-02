@@ -9,6 +9,8 @@
             <Setter Property="Background" Value="#EBEBEB"/>
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="BorderBrush" Value="#C0C0C0"/>
+            <Setter Property="MinWidth" Value="22"/>
+            <Setter Property="MinHeight" Value="20"/>
         </Style>
     </Application.Resources>
 </Application>

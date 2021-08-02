@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using iRacingSimulator;
+using System.Collections.Generic;
 using System.Linq;
-using iRacingSimulator;
 using static iRacingSdkWrapper.SdkWrapper;
 
 namespace iRacingReplayControl

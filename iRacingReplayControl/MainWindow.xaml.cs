@@ -1,6 +1,7 @@
 ﻿using iRacingSimulator;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,6 +13,8 @@ namespace iRacingReplayControl
         private Transition _lastApplied;
         private bool _connected = false;
         private CamTransition _currentCam;
+        private State _lastState = null;
+        private bool _playing = false;
 
         public bool Connected
         {
@@ -25,6 +28,22 @@ namespace iRacingReplayControl
                 }
             }
         }
+
+        public bool Playing
+        {
+            get => _playing;
+            private set
+            {
+                if (_playing != value)
+                {
+                    _playing = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged("Paused");
+                }
+            }
+        }
+
+        public bool Paused => !Playing;
 
         public CamTransition CurrentCam
         {
@@ -71,35 +90,32 @@ namespace iRacingReplayControl
 
         private void SelectLastAppliedTransition()
         {
-            if (_lastApplied == null)
-                return;
+            if (_lastApplied == null || itemsControl.SelectedItem == _lastApplied) return;
+            SelectTransition(_lastApplied);
 
-            int playBackSpeed = Sim.Instance.Telemetry.ReplayPlaySpeed.Value;
-
-            // Don't change selection if replay is paused.
-            // So a click on a transition doesn't loose focus even if multiple transitions are stored for the same frame number.
-            if (playBackSpeed != 0 && itemsControl.SelectedItem != _lastApplied)
+            try
             {
-                SelectTransition(_lastApplied);
-
                 // Autoscroll
                 int index = itemsControl.SelectedIndex;
                 object item = itemsControl.Items.GetItemAt(index);
                 itemsControl.ScrollIntoView(item);
+            }
+            catch (Exception)
+            {
+                Debug.Print("Can't scroll"); // Out of range
             }
         }
 
         private void ApplyTransitions()
         {
             State state = new State();
-            int playBackSpeed = Sim.Instance.Telemetry.ReplayPlaySpeed.Value;
-            Transition lastApplied = Transitions.Apply(playBackSpeed, _currentCam.FrameNum, state);
+            Transition lastApplied = Transitions.Apply(_currentCam.FrameNum, state);
 
-            if (_lastApplied != lastApplied)
-            {
-                state.Apply();
-                _lastApplied = lastApplied;
-            }
+            if (state.IsEmpty() || state.Equals(_lastState)) return;
+
+            state.Apply(_currentCam);
+            _lastApplied = lastApplied;
+            _lastState = state;
         }
 
         private void OnTelemetryUpdated(object sender, iRacingSdkWrapper.SdkWrapper.TelemetryUpdatedEventArgs e)
@@ -113,15 +129,22 @@ namespace iRacingReplayControl
             );
 
             Connected = true; // TODO: listen to connection events
-            ApplyTransitions();
-            SelectLastAppliedTransition();
+
+            if (Sim.Instance.Telemetry.ReplayPlaySpeed.Value != 1)
+            {
+                Playing = false;
+            }
+
+            if (Connected && Playing)
+            {
+                ApplyTransitions();
+                SelectLastAppliedTransition();
+            }
         }
 
         private void JumpTo(Transition transition)
         {
-            if (transition == null)
-                return;
-
+            if (transition == null) return;
             transition.JumpTo();
         }
 
@@ -151,6 +174,23 @@ namespace iRacingReplayControl
         private void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        private void ClickOnPlay(object sender, RoutedEventArgs e)
+        {
+            Play();
+        }
+
+        private void Play()
+        {
+            Playing = true;
+            Sim.Instance.Sdk.Replay.SetPlaybackSpeed(1);
+        }
+
+        private void Pause(object sender, RoutedEventArgs e)
+        {
+            Playing = false;
+            Sim.Instance.Sdk.Replay.SetPlaybackSpeed(0);
         }
     }
 }

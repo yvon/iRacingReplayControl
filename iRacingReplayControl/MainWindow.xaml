@@ -49,5 +49,9 @@
             </ItemsControl.ItemTemplate>
         </ListBox>
         <Label Content="Left click jumps to transition, right click deletes it" HorizontalAlignment="Center" FontSize="10" FontStyle="Italic" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="▶" Margin="0 0 2 0" Padding="2 0 0 1" IsEnabled="{Binding Paused}" Click="ClickOnPlay"/>
+            <Button Content="❚❚" Margin="2 0 0 0" IsEnabled="{Binding Playing}" Click="Pause"/>
+        </StackPanel>
     </StackPanel>
 </Window>

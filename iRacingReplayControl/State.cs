@@ -1,4 +1,5 @@
 ﻿using iRacingSimulator;
+using System.Diagnostics;
 
 namespace iRacingReplayControl
 {
@@ -9,16 +10,40 @@ namespace iRacingReplayControl
         public int? CarNumber { get; set; }
         public int? CamNumber { get; set; }
 
-        public void Apply()
+        public void Apply(CamTransition currentCam)
         {
-            if (FrameNum != null)
-                Sim.Instance.Sdk.Replay.SetPosition((int)FrameNum);
+            Debug.Print($"Apply state: FrameNum: {FrameNum}, CarNumber: {CarNumber}, CamNumber: {CamNumber}");
 
-            if (PlayBackSpeed != null)
-                Sim.Instance.Sdk.Replay.SetPlaybackSpeed((int)PlayBackSpeed);
+            if (FrameNum != null && currentCam.FrameNum < FrameNum)
+            {
+                Sim.Instance.Sdk.Replay.SetPosition((int)FrameNum);
+                Sim.Instance.Sdk.Replay.SetPlaybackSpeed(1);
+            }
 
             if (CarNumber != null && CamNumber != null)
+            {
                 Sim.Instance.Sdk.Camera.SwitchToCar((int)CarNumber, (int)CamNumber);
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is State)) return false;
+            State state = (State)obj;
+
+            return state.FrameNum == FrameNum &&
+                state.CarNumber == CarNumber &&
+                state.CamNumber == CamNumber;
+        }
+
+        public override int GetHashCode()
+        {
+            return (int)(FrameNum ^ CamNumber ^ CarNumber);
+        }
+
+        public bool IsEmpty()
+        {
+            return FrameNum == null && CarNumber == null && CamNumber == null;
         }
     }
 }

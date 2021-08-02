@@ -19,12 +19,10 @@ namespace iRacingReplayControl
 
         public override string Label => _label;
 
-        public override bool Apply(int playBackSpeed, State state)
+        public override bool Apply(State state)
         {
             state.CarNumber = _carNumber;
             state.CamNumber = _camNumber;
-            state.FrameNum = null;
-            state.PlayBackSpeed = null;
             return true;
         }
 
